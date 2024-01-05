@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "taiyochannel"
+version = "0.1.0"
+description = "taiyochannel"
+authors = ["k175"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+uvicorn = "0.21.1"
+fastapi = "0.94.1"
+sqlalchemy = "2.0.9"
+mysqlclient = "2.1.1"
+python-multipart="0.0.6"
+python-magic="0.4.27"
+pillow="9.5.0"

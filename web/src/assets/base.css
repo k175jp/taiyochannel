@@ -1,0 +1,10 @@
+.items-center-flex {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.items-center {
+    margin-left: auto;
+    margin-right: auto;
+}

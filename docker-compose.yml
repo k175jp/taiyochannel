@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  web:
+    container_name: taiyochannel_web
+    image: taiyochannel_web
+    restart: always
+    depends_on:
+      - backend
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - network
+
+  backend:
+    container_name: taiyochannel_backend
+    image: taiyochannel_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    expose:
+      - 8000
+    environment:
+      DB_HOST: '${DB_HOST}'
+      DB_PORT: '${DB_PORT}'
+      DB_NAME: '${MYSQL_DATABASE}'
+      DB_USER: '${MYSQL_USER}'
+      DB_PASSWORD: '${MYSQL_PASSWORD}'
+    networks:
+      - network
+    command: "uvicorn main:app --host 0.0.0.0"
+
+  db:
+    container_name: taiyochannel_db
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+      TZ: '${TZ}'
+      LANG: '${LANG}'
+      LANGUAGE: '${LANGUAGE}'
+    networks:
+      - network
+    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD
+      interval: 1s
+      retries: 60
+
+networks:
+  network:
+    driver: bridge
